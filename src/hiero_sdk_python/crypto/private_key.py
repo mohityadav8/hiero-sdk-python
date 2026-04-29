@@ -14,7 +14,6 @@ from cryptography.hazmat.primitives.asymmetric import (
 from hiero_sdk_python.crypto.key import Key
 from hiero_sdk_python.crypto.public_key import PublicKey
 from hiero_sdk_python.hapi.services import basic_types_pb2
-from hiero_sdk_python.utils.crypto_utils import keccak256
 
 
 _LEGACY_ECDSA_PRIVATE_KEY_PREFIX = "3030020100300706052b8104000a04220420"
@@ -284,10 +283,7 @@ class PrivateKey(Key):
             return self._private_key.sign(data)
 
         # ECDSA (secp256k1) uses SHA-256 for hashing during signing
-        signature_der = self._private_key.sign(
-            data,
-            ec.ECDSA(hashes.SHA256())
-        )
+        signature_der = self._private_key.sign(data, ec.ECDSA(hashes.SHA256()))
         r, s = asym_utils.decode_dss_signature(signature_der)
         return r.to_bytes(32, "big") + s.to_bytes(32, "big")
 
